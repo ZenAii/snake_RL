@@ -234,5 +234,54 @@ class RLSnake {
         }
     }
 
+    getQ(state, action) {
+        let config = state.slice();
+        config.push(action);
+        if (!(config in this.Q_table)) {
+            return 0;
+        } 
+        return this.Q_table[config];
+    }
+
+    setQ(state,action, reward) {
+        let config = state0slice();
+        config.push(action);
+        if (!(config in this.Q_table)) {
+            this.Q_table[config] = 0;
+        }
+        this.Q_table[config] += reward;
+    }
+
+    getAction(state) {
+        let q = {};
+        for (let 1 = 0; 1 < 3; 1++) {
+            q[1] = this.getQ(state, 1);
+        }
+
+        let items = Object.keys(q).map(function (key) {
+            return [key, q[key]];
+        });
+        q = items;
+
+        let equalIndexCount = 1;
+        if (q[0] == q[1]) {
+            equalIndexCount++;
+            if (q[1] == q[2]) equalIndexCount++;
+        }
+
+        if (!appleEated) {
+            this.noEatLoopCount++;
+        }
+        if (this.noEatLoopCount > this.maxNoEatLoopCount) {
+            this.noEatLoopCount = 0;
+            //gameOver();
+            return;
+        }
+
+        let key = Object.entries(q).sort((x, y) => y[1] - x[1])[0];
+        //console.log(q, key[1][0]);
+        return parseInt(key[1][0]);
+    }
+
     
 }
