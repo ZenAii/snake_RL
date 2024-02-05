@@ -283,5 +283,108 @@ class RLSnake {
         return parseInt(key[1][0]);
     }
 
-    
+    checkDirections() {
+        let correspondingSize;
+        let headTail = snake.tail[snake.tail.length - 1];
+        let rx = snake.rotateX;
+        let ry = snake.rotateY;
+        let size = snake.size;
+        //wall
+        if (
+            (ry == 1 && headTail.x == 0) ||
+            (rx == 1 && headTail.y + size == canvas.height) ||
+            (ry == -1 && headTail.x + size == canvas.width) ||
+            (rx == -1 && headTail.y == 0)
+        ) {
+            this.state[this.isRightClearIndex] = 0;
+        }
+
+        if (
+            (ry == 1 && headTail.x + size == canvas.width) ||
+            (rx == 1 && headTail.y == 0) ||
+            (ry == -1 && headTail.x == 0) ||
+            (rx == -1 && headTail.y + size == canvas.height)
+        ) {
+            this.state[this.isLeftClearIndex] = 0;
+        }
+
+        if (
+            (ry == 1 && headTail.y + size == canvas.height) ||
+            (rx == 1 && headTail.x + size == canvas.width) ||
+            (ry == -1 && headTail.y == 0) ||
+            (rx == -1 && headTail.x == 0)
+        ) {
+            this.state[this.isAheadClearIndex] = 0;
+        }
+
+        for (let i = 0; i < snake.tail.length - 2; i++) {
+            let ithTail = snake.tail[i];
+            if (rx == 0 && headTail.y == ithTail.y) {
+                correspondingSize = ry == 1 ? -size : size;
+                if (headTail.x == ithTail.x + correspondingSize) {
+                    this.state[this.isLeftClearIndex] = 0;
+                }
+                if (headTail.x == ithTail.x - correspondingSize) {
+                    this.state[this.isRightClearIndex] = 0;
+                }
+            } else if (ry == 0 && headTail.x == ithTail.x) {
+                let correspondingSize = rx == 1 ? -size : size;
+                if (headTail.y == ithTail.y + correspondingSize) {
+                    this.state[this.isRightClearIndex] = 0;
+                }
+                if (headTail.y == ithTail.y - correspondingSize) {
+                    this.state[this.isLeftClearIndex] = 0;
+                }
+            }
+            if (
+                rx == 0 &&
+                headTail.x == ithTail.x &&
+                headTail.y + ry * size == ithTail.y
+            ) {
+                this.state[this.isAheadClearIndex] = 0;
+            }
+            if (
+                ry == 0 &&
+                headTail.y == ithTail.y &&
+                headTail.x + rx * size == ithTail.x
+            ) {
+                this.state[this.isAheadClearIndex] = 0;
+            }
+        }
+        if (headTail.x == apple.x && ry != 0) {
+            if (ry == 1 && headTail.y < apple.y)
+                this.state[this.isAppleAheadIndex] = 1;
+            if (ry == -1 && headTail.y > apple.y)
+                this.state[this.isAppleAheadIndex] = 1;
+        } else if (headTail.y == apple.y && rx != 0) {
+            if (rx == 1 && headTail.x < apple.x)
+                this.state[this.isAppleAheadIndex] = 1;
+            if (rx == -1 && headTail.x > apple.x)
+                this.state[this.isAppleAheadIndex] = 1;
+        } else {
+            let index = -1;
+            if (ry == 1 && apple.x > headTail.x) {
+                index = this.isAppleLeftIndex;
+            } else if (ry == 1 && apple.x < headTail.x) {
+                index = this.isAppleRightIndex;
+            }
+            if (ry == -1 && apple.x > headTail.x) {
+                index = this.isAppleRightIndex;
+            } else if (ry == -1 && apple.x < headTail.x) {
+                index = this.isAppleLeftIndex;
+            }
+            if (rx == 1 && apple.y > headTail.y) {
+                index = this.isAppleRightIndex;
+            } else if (rx == 1 && apple.y < headTail.y) {
+                index = this.isAppleLeftIndex;
+            }
+            if (rx == -1 && apple.y > headTail.y) {
+                index = this.isAppleLeftIndex;
+            } else if (rx == -1 && apple.y < headTail.y) {
+                index = this.isAppleRightIndex;
+            }
+            if (index != -1) this.state[index] = 1;
+        }
+    }
+}
 }
