@@ -196,6 +196,42 @@ class RLSnake {
             }
         }
 
+        let optimumFutureValue = Math.max(
+            this.getQ(futureState, 0),
+            this.getQ(futureState, 1),
+            this.getQ(futureState, 2)
+            
+        );
+
+        let updateValue = 
+            this.alpha * 
+                (rewardForState + 
+                    this.gamma * optimumFutureValue - 
+                    this.getQ(state, aciton)) -
+                0.0001;
+            this.setQ(state, action, updateValue);
+
+    }
+
+    implementAction(action) {
+        if (typeof action === "undefined") return;
+        if (!action) return;
+        if (action == 0) return;
+        let isRight = action == 2 ? -1 : 1;
+
+        if (snake.rotateX == 1) {
+            snake.rotateY = -1 * isRight;
+            snake.rotateX = 0;
+        } else if (snake.rotateX == -1) {
+            snake.rotateY = 1 * isRight;
+            snake.rotateX = 0;
+        } else if (snake.rotateY == 1) {
+            snake.rotateX = 1 * isRight;
+            snake.rotateY = 0;
+        } else if (snake.rotateY == -1) {
+            snake.rotateX = -1 * isRight;
+            snake.rotateY = 0;
+        }
     }
 
     
