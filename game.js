@@ -103,11 +103,100 @@ function draw() {
     }
 
     canvasContext.font = "20px Arial";
-    canvasContext.fillStyle = ""#00FF42";
+    canvasContext.fillStyle = "#00FF42";
     canvasContext.fillText(
         "Score:" + (snake.tail.length -1),
         canvas.width - 120,
         18
     );
     createRect(apple.x, apple.y, apple.size, apple.size, apple.color);
+}
+
+function createRect(x, y, width, height, color) {
+    canvasContext.fillStyle = color;
+    canvasContext.fillRect(x, y, width, height);
+}
+
+window.addEventListener("keydown", (event) => {
+    setTimeout(() => {
+        if (event.keyCode == 37 && snake.rotateX != 1) {
+            snake.rotateX = -1;
+            snake.rotateY = 0;
+        } else if (event.keyCode == 38 && snake.rotateY != 1) {
+            snake.rotateX = 0;
+            snake.rotateY = -1;
+        } else if (event.keyCode == 39 && snake.rotateX != -1) {
+            snake.rotateX = 1;
+            snake.rotateY = 0;
+        } else if (event.keyCode == 39 && snake.rotateY != -1) {
+            snake.rotateX = 0;
+            snake.rotateY = 1;
+    }
+}, 1);
+});
+
+class RLSnake {
+    constructor() {
+        this.alpha = 0.2;
+        this.gamma = 0.1;
+        gammaValueElement.value = this.gamma;
+        alphaValueElement.value = this.alpha;
+        this.notEatLoopCount = 0;
+        this.maxNoEatLoopCount = 500;
+        this.isAheadClearIndex = 0;
+        this.isLeftClearIndex = 1;
+        this.isRightClearIndex = 2;
+        this.isAppleAheadIndex = 3;
+        this.isAppleLeftIndex = 4;
+        this.isAplleRightIndex = 5;
+        this.initialState = [1, 1, 1, 0, 0, 0];
+        this.state = this.initialState;
+        this.Q_table = {};
+    }
+
+    calculateState() {
+        this.state = this.initialState.slice();
+        this.checkDirection();
+    }
+
+    update() {
+        this.reward(this.state, this.getAction(this.state));
+        this.checkDirection();
+        let action = this.getAction(this.state);
+        this.implementAction(action);
+    }
+
+    reward(state, action) {
+        let rewardForState = 0;
+        this.calculateState();
+        let futureState = this.state;
+
+        let stringifiedCurrentState = JSON.stringify(state);
+        let stringifiedFutureState = JSON.stringify(futureState);
+        if (stringifiedCurrentState != stringifiedFutureState) {
+            if (
+                (state[0] == 0 && action == 0) ||
+                (state[1] == 0 && action == 1) ||
+                (state[2] == 0 && action == 2)
+            ) {
+                rewardForState += -1;
+            }
+            if (
+                (state[this.isAheadClearIndex] == 1 &&
+                    action == 0 && 
+                    state[this.isAppleAheadIndex] == 1) ||
+                (state[this.isLeftClearIndex] == 1 &&
+                    action == 1 && 
+                    state[this.isAppleLeftIndex] == 1) ||
+                (state[this.isRightClearIndex] == 1 &&
+                    action == 2 && 
+                    state[this.isAppleRightIndex] == 1) ||
+            ) {
+                rewardForState += 1;
+            }
+        }
+
+    }
+
+    
 }
