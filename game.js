@@ -80,7 +80,7 @@ function checkCollision() {
         return;
     }
 
-    for (let i = 0; i < snake.tail.length -2; i++ {
+    for (let i = 0; i < snake.tail.length -2; i++) {
         if (headTail.x == snake.tail[i].x && headTail.y == snake.tail[i].y) {
             gameOver();
             return;
